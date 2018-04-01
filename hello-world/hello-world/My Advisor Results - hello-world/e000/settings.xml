@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<bag xmlns:boolean="http://www.w3.org/2001/XMLSchema#boolean" xmlns:int="http://www.w3.org/2001/XMLSchema#int" int:version="1">
+ <SurveyView>
+  <TopDownGrid>
+   <ColumnStructure>
+    <Visibility>
+     <boolean:fdFunctionName>true</boolean:fdFunctionName>
+     <boolean:fdTotalTimePercent>true</boolean:fdTotalTimePercent>
+     <boolean:fdTotalTime>true</boolean:fdTotalTime>
+     <boolean:fdSelfTime>true</boolean:fdSelfTime>
+     <boolean:fdCompilerOptInfoVectLoopTypeSplitting>true</boolean:fdCompilerOptInfoVectLoopTypeSplitting>
+     <boolean:fdCompilerOptInfoVectMsg>true</boolean:fdCompilerOptInfoVectMsg>
+     <boolean:fdVectInfo>true</boolean:fdVectInfo>
+     <boolean:fdVectInfoInstSetAnalysis>true</boolean:fdVectInfoInstSetAnalysis>
+     <boolean:fdCompilerOptDetails>true</boolean:fdCompilerOptDetails>
+     <boolean:fdLocation>true</boolean:fdLocation>
+    </Visibility>
+   </ColumnStructure>
+  </TopDownGrid>
+  <BottomUpGrid>
+   <ColumnStructure>
+    <Visibility>
+     <boolean:fdFunctionName>true</boolean:fdFunctionName>
+     <boolean:fdLoopAnnotation>true</boolean:fdLoopAnnotation>
+     <boolean:fdRecommendationPresence>true</boolean:fdRecommendationPresence>
+     <boolean:fdSelfTime>true</boolean:fdSelfTime>
+     <boolean:fdTotalTime>true</boolean:fdTotalTime>
+     <boolean:fdCompilerOptInfoVectLoopTypeSplitting>true</boolean:fdCompilerOptInfoVectLoopTypeSplitting>
+     <boolean:fdCompilerOptInfoVectMsg>true</boolean:fdCompilerOptInfoVectMsg>
+     <boolean:fdVectInfo>true</boolean:fdVectInfo>
+     <boolean:fdVectInfoInstSetAnalysis>true</boolean:fdVectInfoInstSetAnalysis>
+     <boolean:fdCompilerOptDetails>true</boolean:fdCompilerOptDetails>
+     <boolean:fdLocation>true</boolean:fdLocation>
+    </Visibility>
+   </ColumnStructure>
+  </BottomUpGrid>
+ </SurveyView>
+</bag>
