@@ -13,7 +13,7 @@ int main()
 	int i = 0;
 
 	for (i = 0; i < num_steps; i++)
-		x = 1.0 / num_steps;
+		x = 1.0 / (double)num_steps;
 		y = 4.0 / (1.0 + pow(x, 2.0));
 		sum += x * y;
 
