@@ -32,5 +32,8 @@
     <ClCompile Include="pi-number.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="pi_parallel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
