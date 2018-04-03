@@ -12,9 +12,9 @@ int main() {
 	int num_steps = 50000;
 	int i = 0;
 
+	// This probably raises the problem of false sharing at the end of the day
 	double sum[NUM_THREADS];
-	double pi = 0.;
-	double x = 0.0, y = 0.0;
+	double pi = 0.0;
 	double step_width = 1.0 / (double)num_steps;
 	int ACTUAL_NUM_THREADS = 0;
 
@@ -25,6 +25,9 @@ int main() {
 	{
 		int ID = omp_get_thread_num();
 		int i = 0;
+		double x = 0.0;
+		double y = 0.0;
+
 
 		#pragma omp critical
 		{
@@ -39,7 +42,7 @@ int main() {
 
 		// Split the job among the threads
 		for (i = ID, sum[ID] = 0.0; i < num_steps; i += ACTUAL_NUM_THREADS) {
-			x += (i+0.5) * step_width;
+			x += (i);
 			y = 4.0 / (1.0 + x * x);
 			sum[ID] += step_width * y;
 		}
