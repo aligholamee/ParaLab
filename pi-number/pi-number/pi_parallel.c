@@ -6,8 +6,8 @@
 #include <stdio.h>
 
 int main() {
-	
-	int num_steps = 50000;
+
+	int num_steps = 10000;
 	int i = 0;
 	const int num_threads = 5;
 
@@ -20,7 +20,7 @@ int main() {
 	omp_set_num_threads(num_threads);
 
 	#pragma omp parallel
-	{	
+	{
 		int ID = omp_get_thread_num();
 		int i = 0;
 
@@ -31,7 +31,7 @@ int main() {
 
 		for (i = ID, sum[ID] = 0.0; i < num_steps; i += ID + 1) {
 			x += num_threads * step_width;
-			y = 4.0 / (1.0 + pow(x, 2.0));
+			y = 4.0 / (1.0 + x * x);
 			sum[ID] += step_width * y;
 		}
 	}
@@ -44,7 +44,7 @@ int main() {
 	}
 
 	// Display the results
-	printf("The computed pi number is equal to: %lf", pi);
+	printf("The computed pi number is equal to: %lf\n", pi);
 	// getchar();
 
 	return 0;
