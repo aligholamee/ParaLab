@@ -28,21 +28,17 @@ int main() {
 		double x = 0.0;
 		double y = 0.0;
 
-
-		#pragma omp critical
-		{
-			printf("my thread id: %d \n", ID);
-		}
+		ACTUAL_NUM_THREADS = omp_get_num_threads();
 
 		// Only for the master thread
-		if(ID == 0) {
+		//if(ID == 0) {
 			// Get the number of generated threads in actual
-			ACTUAL_NUM_THREADS = omp_get_num_threads();
-		}
+			//ACTUAL_NUM_THREADS = omp_get_num_threads();
+		//}
 
 		// Split the job among the threads
 		for (i = ID, sum[ID] = 0.0; i < num_steps; i += ACTUAL_NUM_THREADS) {
-			x += (i);
+			x += ACTUAL_NUM_THREADS;
 			y = 4.0 / (1.0 + x * x);
 			sum[ID] += step_width * y;
 		}
@@ -50,13 +46,13 @@ int main() {
 
 	// Combine the computed results of each thread
 	for (i = 0; i < ACTUAL_NUM_THREADS; i++) {
-	    pi += sum[i];
+		pi += sum[i];
 		double temp = sum[i];
 		printf("sum[%d] = %lf\n", i, temp);
 	}
 
 	// Display the results
-	printf("The computed pi number is equal to: %lf\n", pi);
+	printf("The computed pi number is equal to: %lf \n", pi);
 	// getchar();
 
 	return 0;
