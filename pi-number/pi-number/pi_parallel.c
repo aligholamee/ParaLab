@@ -5,13 +5,12 @@
 #include <math.h>
 #include <stdio.h>
 
-#define NUM_THREADS 5
+#define NUM_THREADS 4
 
 int main() {
 
-	int num_steps = 10000;
+	int num_steps = 50000;
 	int i = 0;
-
 
 	double sum[NUM_THREADS];
 	double pi = 0.;
@@ -26,7 +25,6 @@ int main() {
 	{
 		int ID = omp_get_thread_num();
 		int i = 0;
-		int
 
 		#pragma omp critical
 		{
@@ -40,8 +38,8 @@ int main() {
 		}
 
 		// Split the job among the threads
-		for (i = ID, sum[ID] = 0.0; i < num_steps; i += ID + 1) {
-			x += num_threads * step_width;
+		for (i = ID, sum[ID] = 0.0; i < num_steps; i += ACTUAL_NUM_THREADS) {
+			x += (i+0.5) * step_width;
 			y = 4.0 / (1.0 + x * x);
 			sum[ID] += step_width * y;
 		}
