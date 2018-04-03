@@ -5,30 +5,41 @@
 #include <math.h>
 #include <stdio.h>
 
+#define NUM_THREADS 5
+
 int main() {
 
 	int num_steps = 10000;
 	int i = 0;
-	const int num_threads = 5;
 
-	double sum[num_threads];
+
+	double sum[NUM_THREADS];
 	double pi = 0.;
 	double x = 0.0, y = 0.0;
 	double step_width = 1.0 / (double)num_steps;
+	int ACTUAL_NUM_THREADS = 0;
 
 	// Request 5 threads
-	omp_set_num_threads(num_threads);
+	omp_set_num_threads(NUM_THREADS);
 
 	#pragma omp parallel
 	{
 		int ID = omp_get_thread_num();
 		int i = 0;
+		int
 
 		#pragma omp critical
 		{
 			printf("my thread id: %d \n", ID);
 		}
 
+		// Only for the master thread
+		if(ID == 0) {
+			// Get the number of generated threads in actual
+			ACTUAL_NUM_THREADS = omp_get_num_threads();
+		}
+
+		// Split the job among the threads
 		for (i = ID, sum[ID] = 0.0; i < num_steps; i += ID + 1) {
 			x += num_threads * step_width;
 			y = 4.0 / (1.0 + x * x);
@@ -37,7 +48,7 @@ int main() {
 	}
 
 	// Combine the computed results of each thread
-	for (i = 0; i < num_threads; i++) {
+	for (i = 0; i < ACTUAL_NUM_THREADS; i++) {
 	    pi += sum[i];
 		double temp = sum[i];
 		printf("sum[%d] = %lf\n", i, temp);
