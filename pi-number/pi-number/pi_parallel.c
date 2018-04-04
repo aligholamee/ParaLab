@@ -16,7 +16,6 @@ int main() {
 
 	// Change the sum to a variable
 	// double sum[NUM_THREADS];
-	double sum;
 	double pi;
 	double step_width = 1.0 / (double)num_steps;
 	int ACTUAL_NUM_THREADS;
@@ -26,10 +25,13 @@ int main() {
 
 	#pragma omp parallel
 	{
+		// Beginning of the parallel block
+
 		int ID = omp_get_thread_num();
 		int i;
 		double x = (double)ID;
 		double y;
+		double sum;
 		int nthrds;
 
 		ACTUAL_NUM_THREADS = omp_get_num_threads();
@@ -42,30 +44,26 @@ int main() {
 
 		// Split the job among the threads
 		for (i = ID; i < num_steps; i += ACTUAL_NUM_THREADS) {
+			// Beginning of the for block
+			
 			// Go to the proper x
 			x = i * step_width;
 
 			// Find the proper y corresponding to that x
 			y = 4.0 / (1.0 + x * x);
+			sum += step_width * y;
 
-			// Fix the write conflict by assuming sum as a critical variable
-			#pragma omp critical
-				sum += step_width * y;
+			// End of the for block
 		}
+
+		// Fix the write conflict by assuming sum as a critical variable
+		#pragma omp critical
+			pi += sum;
+
+			// End of the parallel block
 	}
 
-	// Combine the computed results of each thread
-
-	// for (i = 0; i < ACTUAL_NUM_THREADS; i++) {
-	// 	pi += sum[i];
-	// 	double temp = sum[i];
-	// 	printf("sum[%d] = %2.4f\n", i, temp);
-	// }
-
-	// Display the results
-	pi = sum;
 	printf("The computed pi number is equal to: %lf \n", pi);
-	// getchar();
 
 	return 0;
 }
