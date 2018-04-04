@@ -13,10 +13,10 @@ int main()
 
 	#pragma omp parallel for reduction(+:sum)
 	for (i = 0; i < num_steps; i++) {
-		x += step_width;
+		x = (i+0.5) * step_width;
 		y = 4.0 / (1.0 + x*x);
 		sum += step_width * y;
-
+	}
 
 
 	printf("The computed pi number is: %lf", sum);
