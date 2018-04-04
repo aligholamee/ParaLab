@@ -13,7 +13,10 @@ int main() {
 	int i = 0;
 
 	// This probably raises the problem of false sharing at the end of the day
-	double sum[NUM_THREADS];
+
+	// Change the sum to a variable
+	// double sum[NUM_THREADS];
+	double sum;
 	double pi;
 	double step_width = 1.0 / (double)num_steps;
 	int ACTUAL_NUM_THREADS;
@@ -38,24 +41,29 @@ int main() {
 		//}
 
 		// Split the job among the threads
-		for (i = ID, sum[ID] = 0.0; i < num_steps; i += ACTUAL_NUM_THREADS) {
+		for (i = ID; i < num_steps; i += ACTUAL_NUM_THREADS) {
 			// Go to the proper x
 			x = i * step_width;
 
 			// Find the proper y corresponding to that x
 			y = 4.0 / (1.0 + x * x);
-			sum[ID] += step_width * y;
+
+			// Fix the write conflict by assuming sum as a critical variable
+			#pragma omp critical
+				sum += step_width * y;
 		}
 	}
 
 	// Combine the computed results of each thread
-	for (i = 0; i < ACTUAL_NUM_THREADS; i++) {
-		pi += sum[i];
-		double temp = sum[i];
-		printf("sum[%d] = %2.4f\n", i, temp);
-	}
+
+	// for (i = 0; i < ACTUAL_NUM_THREADS; i++) {
+	// 	pi += sum[i];
+	// 	double temp = sum[i];
+	// 	printf("sum[%d] = %2.4f\n", i, temp);
+	// }
 
 	// Display the results
+	pi = sum;
 	printf("The computed pi number is equal to: %lf \n", pi);
 	// getchar();
 
