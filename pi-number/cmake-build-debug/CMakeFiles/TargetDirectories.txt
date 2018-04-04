@@ -1,0 +1,3 @@
+/home/ali/Desktop/OpenMP-Mattson/pi-number/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/ali/Desktop/OpenMP-Mattson/pi-number/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/ali/Desktop/OpenMP-Mattson/pi-number/cmake-build-debug/CMakeFiles/pi_number.dir

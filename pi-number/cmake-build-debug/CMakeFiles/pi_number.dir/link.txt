@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/pi_number.dir/pi-number/pi-number.cpp.o CMakeFiles/pi_number.dir/pi-number/pi_parallel.c.o CMakeFiles/pi_number.dir/pi-number/stdafx.cpp.o CMakeFiles/pi_number.dir/pi_parallel2.c.o  -o pi_number 
