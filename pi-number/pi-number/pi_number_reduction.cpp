@@ -11,13 +11,22 @@ int main()
 	double step_width = 1.0 / (double)num_steps;
 	int i = 0;
 	
-	#pragma omp parallel for reduction(+:sum)
+	// Timing purposes
+	double exec_time = 0.0;
+	double start = omp_get_wtime();
+
+	#pragma omp parallel for reduction(+:sum) schedule(runtime)
 	for (i = 0; i < num_steps; i++) {
 		x = (i + 0.5) * step_width;
 		y = 4.0 / (1.0 + x * x);
 		sum += step_width * y;
 	}
 
-	printf("The computed pi number is: %lf", sum);
+	double end = omp_get_wtime();
+	exec_time = end - start;
+
+	printf("\nThe computed pi number is: %f\n", sum);
+	printf("\nThe execution time is: %lf miliseconds.\n", exec_time * 1000);
+
   return 0;
 }
