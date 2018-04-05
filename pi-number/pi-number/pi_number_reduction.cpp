@@ -15,7 +15,7 @@ int main()
 	double exec_time = 0.0;
 	double start = omp_get_wtime();
 
-	#pragma omp parallel for reduction(+:sum) schedule(runtime)
+	#pragma omp parallel for reduction(+:sum) schedule(static, 10000)
 	for (i = 0; i < num_steps; i++) {
 		x = (i + 0.5) * step_width;
 		y = 4.0 / (1.0 + x * x);
