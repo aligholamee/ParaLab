@@ -20,7 +20,7 @@ int main(void)
 {
 	int i;
 	long int j, k, sum;
-	double sumx, sumy, total;
+	double total;
 	DWORD starttime, elapsedtime;
 	// -----------------------------------------------------------------------
 	// Output a start message
@@ -44,13 +44,14 @@ int main(void)
 			// increment check sum
 			sum += 1;
 			// Calculate first arithmetic series
-			sumx = 0.0;
-			//#pragma omp parallel for reduction(+:sumx)
+			// Fixed private access
+			double sumx = 0.0;
+			#pragma omp parallel for reduction(+:sumx)
 			for (k = 0; k<j; k++) 
 				sumx += (double)k;
 			// Calculate second arithmetic series
-			sumy = 0.0;
-			//#pragma omp parallel for reduction(+:sumy)
+			double sumy = 0.0;
+			#pragma omp parallel for reduction(+:sumy)
 			for (k = j; k>0; k--)
 				sumy += (double)k;
 			if (sumx > 0.0)total += 1.0 / sqrt(sumx);
