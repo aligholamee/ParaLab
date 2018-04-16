@@ -10,13 +10,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
-#include <windows.h>
 #include <omp.h>
 
-
-// Adds an additional library so that timeGetTime() can be used
-#pragma comment(lib, "winmm.lib")
+#define NUM_THREADS 1
 
 typedef struct {
 	int *A, *B, *C;
@@ -43,23 +39,26 @@ int main(int argc, char *argv[]) {
 	
 	// Repeat the process 6 times
 	int i = 0;
-	DWORD starttime, elapsedtime;
+	float starttime, elapsedtime;
 	for(i = 0; i < 6; i++) {
 
-		starttime = timeGetTime();
+		starttime = omp_get_wtime();
 
 		fillDataSet(&dataSet);
+
+		// Request threads here
+		omp_set_num_threads(NUM_THREADS);
+
 		add(dataSet);
 		// printDataSet(dataSet);
 		closeDataSet(dataSet);
 
 		// get ending time and use it to determine elapsed time
-		elapsedtime = timeGetTime() - starttime;
-		
-		// report elapsed time
-		printf("Time Elapsed % 10d mSecs\n",
-		(int)elapsedtime);
+		elapsedtime += omp_get_wtime() - starttime;
 	}
+	// report elapsed time
+	printf("Average Time Elapsed %lf Secs\n",
+	elapsedtime/6);
 
 	system("PAUSE");
 	return EXIT_SUCCESS;
@@ -118,6 +117,7 @@ void closeDataSet(DataSet dataSet) {
 
 void add(DataSet dataSet) {
 	int i, j;
+	#pragma omp parallel for private(i)
 	for (i = 0; i < dataSet.n; i++) {
 		for (j = 0; j < dataSet.m; j++) {
 			dataSet.C[i * dataSet.m + j] = dataSet.A[i * dataSet.m + j] + dataSet.B[i * dataSet.m + j];
