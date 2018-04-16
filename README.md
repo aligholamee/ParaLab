@@ -1,2 +1,2 @@
-# OpenMP-Mattson
-OpenMP and Parallel Programming Course by Tim Mattson (Intel).
+# ParaLab
+Parallel Programming Lab Resources.
