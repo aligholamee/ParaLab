@@ -119,6 +119,7 @@ void add(DataSet dataSet) {
 	int i, j;
 	#pragma omp parallel for private(i)
 	for (i = 0; i < dataSet.n; i++) {
+		#pragma omp parallel for private(j)
 		for (j = 0; j < dataSet.m; j++) {
 			dataSet.C[i * dataSet.m + j] = dataSet.A[i * dataSet.m + j] + dataSet.B[i * dataSet.m + j];
 		}
