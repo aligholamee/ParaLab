@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <omp.h>
 
-#define NUM_THREADS 1
+#define NUM_THREADS 8
 
 typedef struct {
 	int *A, *B, *C;
