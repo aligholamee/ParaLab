@@ -11,6 +11,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <windows.h>
+#include <omp.h>
+
+
+// Adds an additional library so that timeGetTime() can be used
+#pragma comment(lib, "winmm.lib")
 
 typedef struct {
 	int *A, *B, *C;
@@ -36,7 +42,7 @@ int main(int argc, char *argv[]) {
 	}
 	fillDataSet(&dataSet);
 	add(dataSet);
-	printDataSet(dataSet);
+	// printDataSet(dataSet);
 	closeDataSet(dataSet);
 	system("PAUSE");
 	return EXIT_SUCCESS;
@@ -95,9 +101,15 @@ void closeDataSet(DataSet dataSet) {
 
 void add(DataSet dataSet) {
 	int i, j;
+	DWORD starttime, elapsedtime;
+	starttime = timeGetTime();
 	for (i = 0; i < dataSet.n; i++) {
 		for (j = 0; j < dataSet.m; j++) {
 			dataSet.C[i * dataSet.m + j] = dataSet.A[i * dataSet.m + j] + dataSet.B[i * dataSet.m + j];
 		}
 	}
+	elapsedtime = timeGetTime() - starttime;
+	// report elapsed time
+	printf("Time Elapsed % 10d mSecs\n",
+	(int)elapsedtime);
 }
