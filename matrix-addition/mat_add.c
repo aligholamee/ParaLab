@@ -40,10 +40,27 @@ int main(int argc, char *argv[]) {
 		dataSet.n = atoi(argv[1]);
 		dataSet.m = atoi(argv[2]);
 	}
-	fillDataSet(&dataSet);
-	add(dataSet);
-	// printDataSet(dataSet);
-	closeDataSet(dataSet);
+	
+	// Repeat the process 6 times
+	int i = 0;
+	DWORD starttime, elapsedtime;
+	for(i = 0; i < 6; i++) {
+
+		starttime = timeGetTime();
+
+		fillDataSet(&dataSet);
+		add(dataSet);
+		// printDataSet(dataSet);
+		closeDataSet(dataSet);
+
+		// get ending time and use it to determine elapsed time
+		elapsedtime = timeGetTime() - starttime;
+		
+		// report elapsed time
+		printf("Time Elapsed % 10d mSecs\n",
+		(int)elapsedtime);
+	}
+
 	system("PAUSE");
 	return EXIT_SUCCESS;
 }
@@ -101,15 +118,9 @@ void closeDataSet(DataSet dataSet) {
 
 void add(DataSet dataSet) {
 	int i, j;
-	DWORD starttime, elapsedtime;
-	starttime = timeGetTime();
 	for (i = 0; i < dataSet.n; i++) {
 		for (j = 0; j < dataSet.m; j++) {
 			dataSet.C[i * dataSet.m + j] = dataSet.A[i * dataSet.m + j] + dataSet.B[i * dataSet.m + j];
 		}
 	}
-	elapsedtime = timeGetTime() - starttime;
-	// report elapsed time
-	printf("Time Elapsed % 10d mSecs\n",
-	(int)elapsedtime);
 }
