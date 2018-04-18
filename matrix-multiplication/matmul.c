@@ -58,6 +58,10 @@ int main(int argc, char *argv[]){
 		elapsed_time = omp_get_wtime() - start_time;
 	}
 
+	// report elapsed time
+	printf("Average Time Elapsed %lf Secs\n",
+	elapsedtime/6);
+	
 	system("PAUSE");
 	return EXIT_SUCCESS;
 }
