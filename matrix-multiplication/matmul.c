@@ -11,6 +11,7 @@
 
 // Let it be.
 #define _CRT_SECURE_NO_WARNINGS
+#define NUM_THREADS 1
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -49,19 +50,20 @@ int main(int argc, char *argv[]){
 	for(i = 0; i < 6; i++) {
 		
 		start_time = omp_get_wtime();
+		omp_set_num_threads(NUM_THREADS);
 
 		fillDataSet(&dataSet);
 		multiply(dataSet);
 		printDataSet(dataSet);
 		closeDataSet(dataSet);
 
-		elapsed_time = omp_get_wtime() - start_time;
+		elapsed_time += omp_get_wtime() - start_time;
 	}
 
 	// report elapsed time
 	printf("Average Time Elapsed %lf Secs\n",
-	elapsedtime/6);
-	
+	elapsed_time/6 * 10);
+
 	system("PAUSE");
 	return EXIT_SUCCESS;
 }
@@ -124,7 +126,11 @@ void closeDataSet(DataSet dataSet){
 
 void multiply(DataSet dataSet){
 	int i, j, k, sum;
+
+	#pragma omp parallel for private(i)
 	for(i = 0; i < dataSet.n; i++){
+
+		#pragma omp parallel for private(j)
 		for(j = 0; j < dataSet.p; j++){
 			sum = 0;
 			for(k = 0; k < dataSet.m; k++){
