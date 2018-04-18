@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <omp.h>
 
 typedef struct {
 	int *A, *B, *C;
@@ -38,10 +39,25 @@ int main(int argc, char *argv[]){
 		dataSet.m = atoi(argv[2]);
 		dataSet.p = atoi(argv[3]);
 	}
-	fillDataSet(&dataSet);
-	multiply(dataSet);
-	printDataSet(dataSet);
-	closeDataSet(dataSet);
+
+
+	// Get the current time 
+	float start_time, elapsed_time;
+
+	// Repeat the process 6 times
+	int i = 0;
+	for(i = 0; i < 6; i++) {
+		
+		start_time = omp_get_wtime();
+
+		fillDataSet(&dataSet);
+		multiply(dataSet);
+		printDataSet(dataSet);
+		closeDataSet(dataSet);
+
+		elapsed_time = omp_get_wtime() - start_time;
+	}
+
 	system("PAUSE");
 	return EXIT_SUCCESS;
 }
