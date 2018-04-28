@@ -3,6 +3,7 @@
         "mmsystem.h": "c",
         "omp.h": "c",
         "ostream": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "cstdlib": "cpp"
     }
 }
