@@ -5,7 +5,7 @@
 using namespace std;
 
 // Let it be...
-#define MAX_THREADS 8
+#define MAX_THREADS 4
 
 // Define the recursive fibonacci
 int fib(int n);
@@ -35,18 +35,24 @@ int main() {
 
 int fib(int n) {
 
-#pragma omp parallel
-		{
+    int a, b;
 
-#pragma omp master
-			{
-				if (n == 1 || n == 0)
-					return 1;
+    if(n == 1 || n == 0)
+        return 1;
 
-				// If not
-				return fib(n - 1) + fib(n - 2);
-			}
 
-		}
+    #pragma omp parallel
+    {
+        #pragma omp single nowait
+        {
+            #pragma omp task
+            a = fib(n - 1);
 
-	}
+            #pragma omp task
+            b = fib(n - 2);
+        }
+
+    }
+
+    return a + b;
+}
