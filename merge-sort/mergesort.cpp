@@ -41,27 +41,36 @@ int main(int argc, char *argv[]) {
 	int NUM_RUNS = 6;
 	double TOTAL_TIME = 0.0;
 
-	for(int i = 0; i < NUM_RUNS; i++) {
+	// NUM_THREADS LIST
+	int num_threads[4] = {1, 2, 4, 8};
 
-		fillArray(array, size);
-		printf("Merge Sort:\n");
+	for(int index = 0; index < sizeof(num_threads); thread_num++) {
+		omp_set_num_threads(num_threads[index]);
+		printf("\n[INFO] Computing with %d threds...\n", num_threads[index]);
 
-		// Start the timer
+		for(int i = 0; i < NUM_RUNS; i++) {
 
-		double start_time = omp_get_wtime();
+			fillArray(array, size);
+			printf("Merge Sort:\n");
 
-		mergeSort(array, size);
+			// Start the timer
 
-		// Finish the timer
-		double elapsed_time = start_time - omp_get_wtime();
-		TOTAL_TIME += elapsed_time;
+			double start_time = omp_get_wtime();
 
-		printArray(array, size);
+			mergeSort(array, size);
 
-		free(array);
+			// Finish the timer
+			double elapsed_time = start_time - omp_get_wtime();
+			TOTAL_TIME += elapsed_time;
+
+			printArray(array, size);
+
+			free(array);
+		}
+		printf("\n[INFO] Completed running with %d threads.", num_threads[index]);
+		printf("\nAverage run time[6 Iterations] with %d threads: %lf", num_threads[index], TOTAL_TIME / NUM_RUNS);
 	}
 
-	print("Average run time[6 Iterations]: %lf", TOTAL_TIME / NUM_RUNS);
 
 	system("PAUSE");
 	return EXIT_SUCCESS;
