@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 
 	for(int index = 0; index < sizeof(num_threads); thread_num++) {
 		omp_set_num_threads(num_threads[index]);
-		printf("\n[INFO] Computing with %d threds...\n", num_threads[index]);
+		printf("\n[INFO] Computing with [%d] thread(s)...\n", num_threads[index]);
 
 		for(int i = 0; i < NUM_RUNS; i++) {
 
@@ -67,8 +67,8 @@ int main(int argc, char *argv[]) {
 
 			free(array);
 		}
-		printf("\n[INFO] Completed running with %d threads.", num_threads[index]);
-		printf("\nAverage run time[6 Iterations] with %d threads: %lf", num_threads[index], TOTAL_TIME / NUM_RUNS);
+		printf("\n[INFO] Completed running with [%d] thread(s).", num_threads[index]);
+		printf("\n[INFO] Average run time[6 Iterations] with [%d] thread(s): %lf", num_threads[index], TOTAL_TIME / NUM_RUNS);
 	}
 
 
