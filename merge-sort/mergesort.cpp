@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <omp.h>
 
 #define MAX(A, B) ((A)>(B))?(A):(B)
 #define MIN(A, B) ((A)<(B))?(A):(B)
@@ -36,12 +37,32 @@ int main(int argc, char *argv[]) {
 	}
 	array = (int *)malloc(sizeof(int) * size);
 
-	fillArray(array, size);
-	printf("Merge Sort:\n");
-	mergeSort(array, size);
-	printArray(array, size);
+	// Run it 6 times
+	int NUM_RUNS = 6;
+	double TOTAL_TIME = 0.0;
 
-	free(array);
+	for(int i = 0; i < NUM_RUNS; i++) {
+
+		fillArray(array, size);
+		printf("Merge Sort:\n");
+
+		// Start the timer
+
+		double start_time = omp_get_wtime();
+
+		mergeSort(array, size);
+
+		// Finish the timer
+		double elapsed_time = start_time - omp_get_wtime();
+		TOTAL_TIME += elapsed_time;
+
+		printArray(array, size);
+
+		free(array);
+	}
+
+	print("Average run time[6 Iterations]: %lf", TOTAL_TIME / NUM_RUNS);
+
 	system("PAUSE");
 	return EXIT_SUCCESS;
 }
