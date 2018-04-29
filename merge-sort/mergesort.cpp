@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
 	// NUM_THREADS LIST
 	int num_threads[4] = {1, 2, 4, 8};
 
-	for(int index = 0; index < sizeof(num_threads); thread_num++) {
+	for(int index = 0; index < sizeof(num_threads); index++) {
 		omp_set_num_threads(num_threads[index]);
 		printf("\n[INFO] Computing with [%d] thread(s)...\n", num_threads[index]);
 
