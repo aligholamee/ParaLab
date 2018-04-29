@@ -42,15 +42,18 @@ int main(int argc, char *argv[]) {
 	double TOTAL_TIME = 0.0;
 
 	// NUM_THREADS LIST
-	int num_threads[4] = {1, 2, 4, 8};
+	int num_threads[] = {1, 2, 4, 8};
+	fillArray(array, size);
 
-	for(int index = 0; index < sizeof(num_threads); index++) {
+	for(int index = 0; index < 4; index++) {
 		omp_set_num_threads(num_threads[index]);
+		printf("\n=======================================\n");
 		printf("\n[INFO] Computing with [%d] thread(s)...\n", num_threads[index]);
+		printf("\n=======================================\n");
 
 		for(int i = 0; i < NUM_RUNS; i++) {
 
-			fillArray(array, size);
+			
 			printf("Merge Sort:\n");
 
 			// Start the timer
@@ -64,13 +67,12 @@ int main(int argc, char *argv[]) {
 			TOTAL_TIME += elapsed_time;
 
 			printArray(array, size);
-
-			free(array);
 		}
 		printf("\n[INFO] Completed running with [%d] thread(s).", num_threads[index]);
-		printf("\n[INFO] Average run time[6 Iterations] with [%d] thread(s): %lf", num_threads[index], TOTAL_TIME / NUM_RUNS);
+		printf("\n[INFO] Average run time[6 Iterations] with [%d] thread(s): %lf\n", num_threads[index], TOTAL_TIME / NUM_RUNS);
 	}
 
+	free(array);
 
 	system("PAUSE");
 	return EXIT_SUCCESS;
@@ -109,7 +111,9 @@ void mergeSort(int *a, int n) {
 	int m;
 	if (n < 2)
 		return;
+		
 	m = n / 2;
+
 	mergeSort(a, m);
 	mergeSort(a + m, n - m);
 	merge(a, n, m);
