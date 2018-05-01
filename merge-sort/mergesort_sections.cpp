@@ -2,12 +2,13 @@
 *				In His Exalted Name
 *	Title:	MergeSort Sequential Code
 *	Author: Ahmad Siavashi, Email: siavashi@aut.ac.ir
-*	Date:	24/11/2015
+*	Date:	1/5/2018
 *	Parallelization: Ali Gholami (aligholami7596@gmail.com)
 */
 
 // Let it be.
 #define _CRT_SECURE_NO_WARNINGS
+#define NUM_THREADS 8
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -38,39 +39,43 @@ int main(int argc, char *argv[]) {
 	array = (int *)malloc(sizeof(int) * size);
 
 	// Run it 6 times
-	int NUM_RUNS = 6;
+	int NUM_RUNS = 2;
 	double TOTAL_TIME = 0.0;
 
-	// NUM_THREADS LIST
-	int num_threads[] = {1, 2, 4, 8};
 	fillArray(array, size);
 
-	for(int index = 0; index < 4; index++) {
-		omp_set_num_threads(num_threads[index]);
-		printf("\n=======================================\n");
-		printf("\n[INFO] Computing with [%d] thread(s)...\n", num_threads[index]);
-		printf("\n=======================================\n");
+	omp_set_num_threads(NUM_THREADS);
+	printf("\n=======================================\n");
+	printf("\n[INFO] Computing with [%d] thread(s)...\n", NUM_THREADS);
+	printf("\n=======================================\n");
 
-		for(int i = 0; i < NUM_RUNS; i++) {
+	for(int i = 0; i < NUM_RUNS; i++) {
 
-			
-			printf("Merge Sort:\n");
+		
+		printf("Merge Sort:\n");
 
-			// Start the timer
+		// Start the timer	
+		double start_time = omp_get_wtime();
 
-			double start_time = omp_get_wtime();
+		// Enable nested recursion parallelization
+		// omp_set_nested(1);
 
+		// Span the parallel region outside
+		#pragma omp parallel
+		{
+			#pragma omp single
 			mergeSort(array, size);
-
-			// Finish the timer
-			double elapsed_time = start_time - omp_get_wtime();
-			TOTAL_TIME += elapsed_time;
-
-			printArray(array, size);
 		}
-		printf("\n[INFO] Completed running with [%d] thread(s).", num_threads[index]);
-		printf("\n[INFO] Average run time[6 Iterations] with [%d] thread(s): %lf\n", num_threads[index], TOTAL_TIME / NUM_RUNS);
+
+		// Finish the timer
+		double elapsed_time = omp_get_wtime() - start_time;
+		TOTAL_TIME += elapsed_time;
+
+		// printArray(array, size);
 	}
+	printf("\n[INFO] Completed running with [%d] thread(s).", NUM_THREADS);
+	printf("\n[INFO] Average run time[6 Iterations] with [%d] thread(s): %lf\n", NUM_THREADS, TOTAL_TIME / NUM_RUNS);
+
 
 	free(array);
 
@@ -108,13 +113,20 @@ void merge(int *a, int n, int m) {
 }
 
 void mergeSort(int *a, int n) {
+
 	int m;
-	if (n < 2)
+	if(n < 2)
 		return;
-		
+
+	// else...
 	m = n / 2;
 
+	#pragma omp task
 	mergeSort(a, m);
+
+	#pragma omp task
 	mergeSort(a + m, n - m);
+
+	#pragma omp taskwait
 	merge(a, n, m);
 }
