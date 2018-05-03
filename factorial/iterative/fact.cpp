@@ -3,7 +3,7 @@
 
 using namespace std;
 
-#define NUM_THREADS 4
+#define NUM_THREADS 2
 
 int fact(int n);
 
@@ -19,45 +19,55 @@ int main() {
     int fact_result = 1;
 
     int job_size = 0;
-    int job_start = 0;
+    int job_start = 1;
     int job_end = 0;
+    // Each thread creates its own fact computation result
+    int thread_fact = 1;
 
-    #pragma omp parallel private(job_size, job_start, job_end)
+    #pragma omp parallel firstprivate(job_size, job_start, job_end, thread_fact)
     {
-        // Each thread creates its own fact computation result
-        int thread_fact = 1;
-
-        int thread_id = omp_get_thread_num();
+        int thread_id = omp_get_thread_num() + 1;
         job_size = num / omp_get_num_threads();
 
-        // Make sure the job size is done until here
-        pragma_omp_flush(job_size);
-
         // Final thread has excessive load
-        if(num % omp_get_num_threads() && thread_id == omp_get_num_threads() - 1) 
+        if(num % omp_get_num_threads() && thread_id == 1) 
             job_size += num % omp_get_num_threads();
 
-        pragma_omp_flush(job_size);
+        #pragma omp critical
+        {
+            cout << "\n[INFO] T["<<thread_id<<"] Job Size = ["<<job_size<<"]\n" << endl;
+        }
         
-        // For the last thread
-        if(thread_id == omp_get_num_threads() - 1) {
-            job_start = thread_id * job_size;
-            job_end = job_start + job_size_last_thread;
+        // Define the limits!
+        if(thread_id != 1) {
+            job_start = (thread_id * job_size)
+        }
+        job_end = job_start + job_size;
 
-        } else {
 
-            // For other threads
-            job_start = thread_id * job_size;
-            job_end = job_start + job_size;
+
+        #pragma omp critical
+        {
+            cout << "\n[INFO] T["<<thread_id<<"] Starts from = ["<<job_start<<"]\n" << endl;
+            cout << "\n[INFO] T["<<thread_id<<"] Ends to = ["<<job_end<<"]\n" << endl;
         }
 
-        for(int i = job_start; i < job_size; i++) {
+        for(int i = job_start; i <= job_end; i++) {
             // Compute the chunk of factorial
-            thread_fact *= ++thread_fact;
+            thread_fact = thread_fact * i;
         }
 
-        // Combine the facts 
-        for(int i = 0; i < omp_get_num_threads(); i++) {
+        #pragma omp critical
+        {
+            cout << "\n[INFO] T["<<thread_id<<"] result = "<<thread_fact<<"\n" << endl;
+        }
+
+
+        // Combine the facts
+        #pragma omp barrier
+
+        for(int i = 0; i < omp_get_num_threads() - 1; i++) {
+            
 
             // Each thread multiples + writes its value and goes away :))
             #pragma omp critical
@@ -68,9 +78,7 @@ int main() {
         
     }
 
-    for(int i = 0; i < num; i++) {
-        
-    }
+    // Print the results
     cout << "Factorial of " << num << ": " << fact_result << endl;
     
     // Get the elapsed time
