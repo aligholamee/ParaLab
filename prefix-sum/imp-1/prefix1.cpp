@@ -65,23 +65,47 @@ int main(int argc, char *argv[]) {
 }
 
 void prefix_sum(int *a, size_t n) {
-	int amount = (int)(n / NUM_THREADS);
-	int start[NUM_THREADS];
-	int end[NUM_THREADS];
-#pragma omp parallel firstprivate(amount)
+	int num_of_threads = 0;
+	int size_of_jobs = 0;
+	#pragma omp parallel
 	{
-		int thread_num = omp_get_thread_num();
-		start[thread_num] = thread_num * amount;
-		end[thread_num] = (thread_num + 1)*amount - 1;
-		for (int i = start[thread_num]; i < end[thread_num]; ++i) {
-			a[i + 1] += a[i];
+		
+		// Get the ID of each thread
+		int thread_id = omp_get_thread_num();
+
+		// Get the number of available threads
+		if(thread_id == 0) 
+			num_of_threads = omp_get_num_threads();
+		
+		// Define the limits!
+		int job_size = n / num_of_threads;
+		int job_start = thread_id * job_size;
+		int job_end = job_start + job_size;
+
+		// Update the global job size
+		if(thread_id == 0)
+			size_of_jobs = job_size;
+
+		for(int i = job_start; i < job_end; i++) {
+
+			// Don't do that for the first element!
+			if(!(i == job_start)) {
+				a[i] += array[i - 1];
+			}
 		}
 	}
-	for (int i = 0; i < NUM_THREADS - 1; i++) {
-		for (int j = start[i + 1]; j <= end[i + 1]; ++j) {
-			a[j] += a[end[i]];
+
+	// Join the local computations
+	for(int i = 1; i < num_of_threads; i++) {
+		int merge_start = i * size_of_jobs;
+		int merge_end = comp_start + size_of_jobs;
+
+		for(int j = merge_start; j < merge_end; j++) {
+			a[j] += a[merge_start - 1]
 		}
 	}
+
+
 }
 
 void print_array(int *a, size_t n) {
