@@ -61,11 +61,8 @@ int main(int argc, char *argv[]) {
 		// omp_set_nested(1);
 
 		// Span the parallel region outside
-		#pragma omp parallel
-		{
-			#pragma omp single
-			mergeSort(array, size);
-		}
+		mergeSort(array, size);
+
 
 		// Finish the timer
 		double elapsed_time = omp_get_wtime() - start_time;
@@ -120,13 +117,14 @@ void mergeSort(int *a, int n) {
 
 	// else...
 	m = n / 2;
+    #pragma omp parallel sections
+    {
 
-	#pragma omp task
-	mergeSort(a, m);
+        #pragma omp section
+        mergeSort(a, m);
 
-	#pragma omp task
-	mergeSort(a + m, n - m);
-
-	#pragma omp taskwait
-	merge(a, n, m);
+        #pragma omp section
+        mergeSort(a + m, n - m);
+    }
+    merge(a, n, m);
 }
