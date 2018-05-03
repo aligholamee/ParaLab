@@ -37,6 +37,7 @@ int main() {
         if(num % omp_get_num_threads() && thread_id == omp_get_num_threads() - 1) 
             job_size += num % omp_get_num_threads();
 
+        pragma_omp_flush(job_size);
         
         // For the last thread
         if(thread_id == omp_get_num_threads() - 1) {
