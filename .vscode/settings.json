@@ -4,6 +4,7 @@
         "omp.h": "c",
         "ostream": "cpp",
         "utility": "cpp",
-        "cstdlib": "cpp"
+        "cstdlib": "cpp",
+        "iostream": "cpp"
     }
 }
