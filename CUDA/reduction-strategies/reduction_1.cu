@@ -13,18 +13,19 @@
 // Macro to handle errors occured in CUDA api
 #define funcCheck(stmt) do { cudaError_t err = stmt; if (err != cudaSuccess) { printf("[ERROR] Failed to run stmt %d, error body: %s\n", __LINE__, cudaGetErrorString(err)); return -1; } } while (0)
 
-#define N 512
+#define N 4194304
 
 // Define some execution parameters
-#define BLOCK_SIZE 256
+#define BLOCK_SIZE 1024
 
 using namespace std;
 
 int parallelReduction(int *a);
 void printArray(int *a, int n);
 
-__global__ void
-reduceKernel(int *g_inData, int *g_outData, int inSize, int outSize)
+
+__device__ void
+recursiveReduce(int *g_inData, int *g_outData, int inSize, int outSize)
 {
 	extern __shared__ int sData[];
 
@@ -47,7 +48,7 @@ reduceKernel(int *g_inData, int *g_outData, int inSize, int outSize)
 	// Tree based reduction
 	for (unsigned int d = 1; d < blockDim.x; d *= 2) {
 		if (tId % (2 * d) == 0)
-			if(tId + d < blockDim.x)
+			if (tId + d < blockDim.x)
 				sData[tId] += sData[tId + d];
 
 		__syncthreads();
@@ -58,6 +59,28 @@ reduceKernel(int *g_inData, int *g_outData, int inSize, int outSize)
 		g_outData[blockIdx.x] = sData[0];
 	}
 
+
+	__syncthreads();
+
+	// Recursive call
+	if (outSize > 1 && i == 0) {
+
+		// Kernel Launch
+		recursiveReduce(g_outData, g_outData, outSize, (outSize - 1) / blockDim.x + 1);
+
+	}
+	else return;
+
+}
+
+__global__ void
+reduceKernel(int *g_inData, int *g_outData, int inSize, int outSize)
+{
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	
+	if (i == 0) {
+		recursiveReduce(g_inData, g_outData, inSize, outSize);
+	}
 }
 
 int main(int argc, char *argv[]) {
@@ -127,7 +150,7 @@ int parallelReduction(int *a)
 	funcCheck(cudaEventRecord(start, NULL));
 
 	// KERNEL LAUNCH
-	reduceKernel << <gridDimensions, blockDimensions, sizeof(int) * block_x >> > (d_A, d_Blocks, memSize, blocksMemSize);
+	reduceKernel << <gridDimensions, blockDimensions, block_x * sizeof(int) >> > (d_A, d_Blocks, memSize, grid_x);
 
 	// Kernel launch error handling
 	funcCheck(cudaGetLastError());
@@ -146,8 +169,8 @@ int parallelReduction(int *a)
 	// Copy result back to host
 	int *h_Blocks = (int *)malloc(blocksMemSize);
 	funcCheck(cudaMemcpy(h_Blocks, d_Blocks, blocksMemSize, cudaMemcpyDeviceToHost));
-	printf("Parallel computation result: \n");
-	printArray(h_Blocks, grid_x);
+	//printf("Parallel computation result: \n");
+	//printArray(h_Blocks, grid_x);
 
 	// Free the allocated spaces
 	cudaFree(d_A);
